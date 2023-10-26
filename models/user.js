@@ -29,6 +29,9 @@ const User = (sequelize, Sequelize) =>
       type: Sequelize.STRING,
       allowNull: false,
     },
+    dob: {
+      type: Sequelize.DATEONLY,
+    },
     password: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -49,4 +52,4 @@ const User = (sequelize, Sequelize) =>
     },
   });
 
-export default User;
+module.exports = User;

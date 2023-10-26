@@ -10,4 +10,4 @@ const dbConfig = {
   },
 };
 // console.log(process.env.DB_DIAL);
-export default dbConfig;
+module.exports = dbConfig;

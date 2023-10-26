@@ -1,12 +1,13 @@
-import db from "../models";
+const db = require("../models");
 const User = db.user;
 // const config = require("../config/auth.config");
 // const fs = require("fs");
 // const Logger = require("../rebound/logger");
 
-import { compareSync, hashSync } from "bcryptjs";
-import { sign } from "jsonwebtoken";
-export function login(req, res) {
+var bcrypt = require("bcryptjs");
+var jwt = require("jsonwebtoken");
+
+exports.login = (req, res) => {
   User.findOne({
     where: {
       username: req.body.username,
@@ -20,7 +21,10 @@ export function login(req, res) {
           message: "Invalid Username or Password!",
         });
       } else {
-        var passwordIsValid = compareSync(req.body.password, user.password);
+        var passwordIsValid = bcrypt.compareSync(
+          req.body.password,
+          user.password
+        );
 
         if (!passwordIsValid) {
           return res.status(404).send({
@@ -28,10 +32,9 @@ export function login(req, res) {
             message: "Invalid Username or Password!",
           });
         }
-        var token = sign(
+        var token = jwt.sign(
           {
             id: user.id,
-            role: user.rolecode,
             pass: user.password,
             fullname: user.fullname,
           },
@@ -45,7 +48,6 @@ export function login(req, res) {
           username: user.username,
           fullname: user.fullname,
           phone: user.phone,
-          role: user.rolecode,
           accessToken: token,
           expiresIn: "12 Hours",
           status: true,
@@ -55,69 +57,32 @@ export function login(req, res) {
     .catch((err) => {
       res.status(500).send({ status: false, message: err.message });
     });
-}
+};
 
-export function changePassword(req, res) {
-  User.findOne({
-    where: {
-      id: req.userId,
-    },
-  })
-    .then((user) => {
-      if (!user) {
-        return res
-          .status(404)
-          .send({ message: "Invalid Username or Password!" });
-      }
-
-      ImUser.findOne({
-        where: {
-          userId: req.userId,
-        },
-      }).then((imuser) => {
-        var passwordIsValid = compareSync(
-          req.body.passwordOld,
-          imuser.password
-        );
-
-        if (!passwordIsValid) {
-          return res.status(400).send({
-            status: false,
-            message: "Invalid Username or Password!",
-          });
-        } else {
-          ImUser.update(
-            {
-              password: hashSync(req.body.passwordNew),
-              forceChangePassword: false,
-            },
-            {
-              where: { id: imuser.id },
-            }
-          )
-            .then((num) => {
-              if (num == 1) {
-                res.send({
-                  status: true,
-                  message: "Change password was updated successfully.",
-                });
-              } else {
-                res.send({
-                  status: false,
-                  message: `failed change password`,
-                });
-              }
-            })
-            .catch((err) => {
-              res.status(500).send({
-                status: false,
-                message: "failed change password",
-              });
-            });
-        }
-      });
-    })
-    .catch((err) => {
-      res.status(500).send({ status: false, message: err.message });
+exports.register = async (req, res) => {
+  try {
+    if (req.body.password) {
+      req.body.password = bcrypt.hashSync(req.body.password);
+    }
+    const timestamp = new Date().toISOString();
+    console.info("#" + timestamp + "//" + req.body);
+    const crud = await db.user.create(req.body);
+    res.status(201).json({
+      status: true,
+      message: "registration successful",
+      payload: crud,
     });
-}
+  } catch (error) {
+    console.error(error);
+    if (error.name === "SequelizeUniqueConstraintError") {
+      res.status(400).json({ status: false, message: "data already exists" });
+    } else {
+      console.error(error);
+      res
+        .status(500)
+        .json({ status: false, message: "Failed to register user" });
+    }
+  }
+  const timestamp = new Date().toISOString();
+  console.info(timestamp + "#");
+};

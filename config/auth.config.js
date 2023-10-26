@@ -1,1 +1,3 @@
-export const secret1 = "si-empuk-api12-zFQsLLx2kKUwmFpITv";
+module.exports = {
+  secret1: "si-empuk-api12-aZcvftyKL0ghta",
+};

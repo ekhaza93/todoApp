@@ -1,29 +1,32 @@
-// models/role.js
-
-const Role = (sequelize, Sequelize) =>
-  sequelize.define("tb_role", {
+const Todo = (sequelize, Sequelize) =>
+  sequelize.define("tb_todo", {
     id: {
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
       allowNull: false,
     },
-    role: {
+    tittle: {
       type: Sequelize.STRING,
       allowNull: false,
-      unique: true,
     },
-    priority: {
+    description: {
+      type: Sequelize.TEXT,
+    },
+    datetodo: {
+      type: Sequelize.DATEONLY,
+    },
+    image: {
+      type: Sequelize.STRING,
+      defaultValue: "null.jpg",
+    },
+    state: {
       type: Sequelize.INTEGER,
-      allowNull: false,
-    },
-    rolecode: {
-      type: Sequelize.STRING,
-      allowNull: false,
+      defaultValue: 1,
     },
     status: {
       type: Sequelize.BOOLEAN,
-      default: true,
+      defaultValue: true,
     },
     created: {
       type: Sequelize.UUID,
@@ -33,4 +36,4 @@ const Role = (sequelize, Sequelize) =>
     },
   });
 
-module.exports = Role;
+module.exports = Todo;
