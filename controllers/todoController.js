@@ -81,6 +81,7 @@ exports.getById = async (req, res) => {
 
 exports.getBy = async (req, res) => {
   const getby = req.query;
+  getby.created=req.userId;
   try {
     let sort;
     const crudId = req.params.id;
@@ -117,6 +118,7 @@ exports.getBydate = async (req, res) => {
   try {
     let sort;
     console.log(start);
+    getby.created=req.userId;
     getby.datetodo = { [Op.between]: [start, end] };
     // const crudId = req.params.id;
     sort = ["createdAt", "DESC"];

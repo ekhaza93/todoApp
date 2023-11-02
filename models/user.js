@@ -38,11 +38,11 @@ const User = (sequelize, Sequelize) =>
     },
     gender: {
       type: Sequelize.STRING,
-      default: "L",
+      defaultValue: "L",
     },
     status: {
       type: Sequelize.BOOLEAN,
-      default: true,
+      defaultValue: true,
     },
     created: {
       type: Sequelize.UUID,
