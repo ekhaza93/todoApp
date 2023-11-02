@@ -30,6 +30,7 @@ db.sequelize
 require("./routes/todoRoute")(app);
 require("./routes/authRoute")(app);
 require("./routes/userRoute")(app);
+require("./routes/imageProfRoute")(app);
 
 const port = process.env.APP_PORT || 3000;
 app.listen(port, () => {
